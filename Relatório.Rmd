@@ -1,0 +1,228 @@
+---
+title: "Relatório"
+output: html_document
+date: "2023-04-3"
+---
+```{r setup, include=FALSE}
+library(openxlsx)
+library(jmv)
+library(tidyverse)
+library(flextable)
+bd <- read.xlsx("trabalho_final_arranjado-3.xlsx")
+knitr::opts_chunk$set(echo = TRUE)
+```
+#### Trabalho realizado por: Eduardo Parracho, nº111423, turma CDA2 e Tomé Marques, nº110966 , turma CDA2
+
+## R
+
+Ao importarmos o ficheiro excel já arranjado e tratado por nós, foi nos pedido que alterássemos o nome de duas variávies. Assim podemos ver os nomes das variáveis antes da alteração.
+
+```{r, echo=FALSE}
+
+colnames(bd)
+```
+
+Realizá-mos a alteração, e alterámos a variável número 8, que tinha o nome "P3" para o nome "Idade". Alterámos tambem a variável número 27, com o nome "AF_Q554", para "Dias.atividade.fisica". Podemos ver agora os nomes das variáveis do nosso ficheiro, já com as alterações feitas
+
+```{r, echo=FALSE}
+colnames(bd)[8] <- "Idade"
+colnames(bd)[27] <- "Dias.atividade.fisica"
+colnames(bd)
+```
+Foi-nos pedido também que imputassemos os valores omissos de uma variável pela mediana dos seus valores. Assim, identificamos a variável "P8_rec", que aborda a satisfação com a vida. Primeiramente identificámos os valores omissos, através do vetor lógico seguinte. O vetor lógico devolve a palavra "TRUE" nas posições onde existirem valores omissos.
+
+```{r, echo=FALSE}
+is.na(bd$P8_rec)
+```
+
+De seguida, calculámos a mediana dos valores dessa variável e substituímos os valores omissos pelo resultado obtido. Para confirmar, voltámos a procurar os valores omissos, e como podemos ver, já não existe nenhum. Para confirmarmos, podemos ver na tabela anterior que existia um valor omisso. Vamos agora à posição e ver que valor é que ficou guardado, sendo que o valor da mediana foi igual a 7.
+```{r, echo=FALSE}
+mediana_variavel <- median(bd$P8_rec, na.rm = TRUE)
+bd$P8_rec[is.na(bd$P8_rec)] <- mediana_variavel
+mensagem <- paste("O valor da mediana da variável P8_rec é ",mediana_variavel)
+mensagem
+is.na(bd$P8_rec)
+paste("O valor presente na posição 451 é igual a", (bd$P8_rec)[451])
+```
+
+## Tabela com medidas descritivas
+
+#### Tabelas Excel
+
+Na tabela de frequências absolutas os dados mostram-nos que a maior parte das respostas foram dadas pelo sexo feminino representando pouco mais de metade das mesmas e apenas 3% da amostragem não se identifica com um dos géneros ‘tradicionais’ ou prefere não dizer. No total existiram 1067 respostas.
+
+```{r, echo = FALSE}
+a <- table(bd[7])
+b <- round(prop.table(a) * 100,1)
+ambos_n <-as.numeric(a)[1] 
+alim_n <- as.numeric(a)[2]
+nalim_n <- as.numeric(a)[3]
+salim_n <- as.numeric(a)[4]
+ambos_p <-as.numeric(b)[1] 
+alim_p <- as.numeric(b)[2]
+nalim_p <- as.numeric(b)[3]
+salim_p <- as.numeric(b)[4]
+Género <- c("Feminino","Masculino", "Outro", "Prefiro não responder")
+n <- c(ambos_n,alim_n,nalim_n,salim_n)
+Percentagem <- c(ambos_p,alim_p,nalim_p,salim_n)
+table_objcompra <- data.frame(Género,n,Percentagem)
+ftab_obj <- flextable(table_objcompra)
+ftab_obj <- bg(ftab_obj, bg = "#3895D3", part = "header")
+ftab_obj <- color(ftab_obj, color = "white", part = "header")
+ftab_obj <- autofit(ftab_obj)
+ftab_obj
+```
+
+Na tabela de frequências absolutas os dados mostram-nos que a maior parte das respostas foi dada pelo sexo feminino representando pouco mais de metade das mesmas e apenas 3% da amostragem não se identifica com um dos géneros ‘tradicionais’ ou prefere não dizer. No total existiram 1067 respostas.
+
+```{r, echo=FALSE}
+a <- table(bd[8])
+b <- round(prop.table(a) * 100,1)
+freq_table <- cbind(a,b)
+colnames(freq_table) <- c("n","n %")
+c <-as.numeric(a)[1] 
+d <- as.numeric(a)[2]
+e <- as.numeric(a)[3]
+f <- as.numeric(a)[4]
+g <- as.numeric(a)[5]
+h <- as.numeric(a)[6]
+i <- as.numeric(a)[7]
+j <- as.numeric(a)[8]
+k <- as.numeric(a)[9]
+l <- as.numeric(a)[10]
+c1 <- as.numeric(b)[1] 
+d1 <- as.numeric(b)[2]
+e1 <- as.numeric(b)[3]
+f1 <- as.numeric(b)[4]
+g1 <- as.numeric(b)[5]
+h1 <- as.numeric(b)[6]
+i1 <- as.numeric(b)[7]
+j1 <- as.numeric(b)[8]
+k1 <- as.numeric(b)[9]
+l1 <- as.numeric(b)[10]
+idades <- c("11","12","13","14","15","16","17","18","19","20")
+n <- c(c,d,e,f,g,h,i,j,k,l)
+Percentagem <- c(c1,d1,e1,f1,g1,h1,i1,j1,k1,l1)
+table_idades <- data.frame(idades,n,Percentagem)
+ftab_obj <- flextable(table_idades)
+ftab_obj <- bg(ftab_obj, bg = "#3895D3", part = "header")
+ftab_obj <- color(ftab_obj, color = "white", part = "header")
+ftab_obj <- autofit(ftab_obj)
+ftab_obj
+```
+
+
+Na tabela de cruzamentos dinâmica cruzaram-se os dados referentes à avaliação de satisfação com a vida e o ciclo escolar e com a junção destes dados pôde-se concluir que a resposta mais comum no 3º ciclo foi a avaliação mais alta possível de satisfação com a vida, já no ensino secundário a resposta mais frequente foi que a vida era irrazoável que representa o nível 4 de 10 de satisfação com a vida. A maioria das respostas foi dada por elementos do ensino secundário e devido a isso o nível 4 de satisfação com a vida foi a resposta mais comum na totalidade de respostas. Analisando os extremos verifica-se que o nível mais baixo foi atribuído mais 0,1 pontos percentuais por elementos do ensino secundário e que o nível mais alto foi atribuído mais 0,1 pontos percentuais por alunos do 3º ciclo. Com isto, embora a diferença de respostas nos extremos seja mínima na análise efetuada retira-se a impressão de que com o avanço no nível de ensino existe um fator que contribui para o aumento de desagrado com a vida por parte da amostragem, infelizmente os dados mostram-se insuficientes para determinar qual seria o possível fator para tal coisa com certezas.
+
+```{r, echo = FALSE}
+table <- table(bd$Satisfação.com.a.vida, bd$cicloescolar.T)
+table2 <- round(prop.table(table)*100,1)
+q1 <-as.numeric(table)[1]
+q2 <-as.numeric(table)[2]
+q3 <-as.numeric(table)[3] 
+q4 <-as.numeric(table)[4] 
+q5 <-as.numeric(table)[5] 
+q6 <-as.numeric(table)[6] 
+q7 <-as.numeric(table)[7] 
+q8 <-as.numeric(table)[8] 
+q9 <-as.numeric(table)[9] 
+q10 <-as.numeric(table)[10] 
+q11 <-as.numeric(table)[11] 
+w1 <-as.numeric(table)[12]
+w2 <-as.numeric(table)[13] 
+w3 <-as.numeric(table)[14]
+w4 <-as.numeric(table)[15] 
+w5 <-as.numeric(table)[16] 
+w6 <-as.numeric(table)[17] 
+w7 <-as.numeric(table)[18] 
+w8 <-as.numeric(table)[19] 
+w9 <-as.numeric(table)[20] 
+w10 <-as.numeric(table)[21] 
+w11 <-as.numeric(table)[22] 
+qq1 <-as.numeric(table2)[1]
+qq2 <-as.numeric(table2)[2]
+qq3 <-as.numeric(table2)[3] 
+qq4 <-as.numeric(table2)[4] 
+qq5 <-as.numeric(table2)[5] 
+qq6 <-as.numeric(table2)[6] 
+qq7 <-as.numeric(table2)[7] 
+qq8 <-as.numeric(table2)[8] 
+qq9 <-as.numeric(table2)[9] 
+qq10 <-as.numeric(table2)[10] 
+qq11 <-as.numeric(table2)[11] 
+ww1 <-as.numeric(table2)[12]
+ww2 <-as.numeric(table2)[13] 
+ww3 <-as.numeric(table2)[14]
+ww4 <-as.numeric(table2)[15] 
+ww5 <-as.numeric(table2)[16] 
+ww6 <-as.numeric(table2)[17] 
+ww7 <-as.numeric(table2)[18] 
+ww8 <-as.numeric(table2)[19] 
+ww9 <-as.numeric(table2)[20] 
+ww10 <-as.numeric(table2)[21] 
+ww11 <-as.numeric(table2)[22] 
+Satisfação <- c("Pior vida possivel","Vida aceitável","Vida boa","Vida irrazoável","Vida má","Vida média boa", "Vida média má","Vida muito boa","Vida muito má","Vida perfeita","Vida razoável")
+n <- c(q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11)
+Percentagem <- c(w1,w2,w3,w4,w5,w6,w7,w8,w9,w10,w11)
+n2 <- c(qq1,qq2,qq3,qq4,qq5,qq6,qq7,qq8,qq9,qq10,qq11)
+Percentagem2 <- c(ww1,ww2,ww3,ww4,ww5,ww6,ww7,ww8,ww9,ww10,ww11)
+table_ex <- data.frame(Satisfação,n,Percentagem,n2,Percentagem2)
+nomes <- c("","3 ciclo","3 ciclo","Secundario","Secundario")
+df <- rbind(nomes, table_ex)
+ftab_obj <- flextable(df)
+ftab_obj <- bg(ftab_obj, bg = "#3895D3", part = "header")
+ftab_obj <- color(ftab_obj, color = "white", part = "header")
+ftab_obj <- autofit(ftab_obj)
+ftab_obj
+  
+```
+
+#### Tabelas Jamovi
+
+Na tabela seguinte, podemos ver o número de pessoas que responderam à pergunta relativa à satisfação com a vida. As respostas a esta pergunta variavam numa escala de 0 a 10. Como podemos ver houve 1068 respostas, sendo que houve quem respondesse 0 e quem respondesse 10, porém, a média e a mediana de respostas está presente no valor 7. 
+
+```{r tab, echo = FALSE}
+jmv::descriptives(
+    data = bd,
+    vars = P8_rec)
+```
+
+Nesta tabela, podemos ver que o número de pessoas que responderam à pergunta acerca da idade foram 1067. Percebemos que os participantes têm idades compreendidas entre os 11 e os 20 anos de idade, e que a média de idades dos mesmo está presente nos 15 anos e a mediana dos resultados presente nos 13. Ou seja, os participantes são adolescentes, uma vez que a saúde psicólogia dos adolescentes é um tema bastante abordado.
+
+```{r table, resuldes = 'hide', echo = FALSE}
+jmv::descriptives(
+    data = bd,
+    vars = Idade)
+```
+
+Na tabela seguinte, conseguimos perceber a distribuição do género (masculino, feminino, outro, prefiro não responder), pela resposta acerca da Satisfação com a vida. Podemos conferir que em média, o género masculino e o género feminino foram quem deram aa respostas mais altas (com 7). Quem escolheu a resposta "Outro" e "Prefiro não responder", apresentou uma média mais baixa (5 e 6, respetivamente). Este ocorrimento pode ser explicado por episódios pessoais que levam as pessoas a ter mais ou menos satisfação com a sua vida, porém, no que toca às medias mais baixas, esta situação pode ser explicada pelo facto de, ainda nos tempos de hoje, existir preconceito da sociedade em quem não se sente bem com o seu género, ou com quem gostaria de mudar de género. Esta é uma situação corrente nos dias de hoje, que pode levar essas pessoas, a sentirem-se excluídas, com medo de assumir o que gostariam de ser, por conta da restante sociedade, e daí poderem apresentar respostas mais baixas na satisfação com a vida.
+
+```{r, echo = FALSE}
+jmv::descriptives(
+    formula = P8_rec ~ `género.T`,
+    data = bd,
+    missing = FALSE,
+    sd = FALSE)
+```
+
+## Gráfico com cruzamentos
+
+Através da análise do gráfico seguinte, conseguimos perceber que as pessoas do género masculino, nos sete dias antecedentes à resposta ao estudo, fizeram mais desporto do que qualquer outro tipo de género. Podemos obversar que no que toca aos restantes géneros a mediana dos dias é baixa. 
+```{r, echo=FALSE}
+jmv::descriptives(
+    formula = Dias.atividade.fisica ~ `género.T`,
+    data = bd,
+    box = TRUE,
+    boxLabelOutliers = FALSE,
+    n = FALSE,
+    missing = FALSE,
+    mean = FALSE,
+    median = FALSE,
+    sd = FALSE,
+    min = FALSE,
+    max = FALSE)
+```
+
+Os participantes que responderam valores mais baixas na pergunta sobre a Satisfação com a vida, foram as pessoas que responderam "Outro" e "Prefiro não responder" na pergunta relativamente ao género. Essas mesmas pessoas também apresentam uma mediana baixa no que toca ao número de dias em que fizeram desporto nos sete dias antecedentes ao estudo. De acordo com os resultados desta amostra, esta falta de prática de exercício físico também pode levar a uma menor satisfação com a vida, pois, segundo estudos o exercício físico acarreta benefícios psicológicos, como a autoestima e a redução de ansiedade.
+Percebemos ainda que a satisfação com a vida pode ser diferente, mediante o género dos participantes.
+
